@@ -3,7 +3,7 @@
 import re
 from app.graph.final_state import FinalState
 from app.graph.db_tools import get_order,get_refund
-
+from app.shipping.shipping_api import track_shipment
 # def memory_node(state: FinalState) -> FinalState:
 #     query = state["query"]
 
@@ -215,16 +215,46 @@ def tool_node(state: FinalState) -> FinalState:
     # Order tracking / status
     # -------------------------------------------------
 
+    # if (
+    #     "track" in query
+    #     or "where is my order" in query
+    #     or "order status" in query
+    #     or "shipping status" in query
+    # ):
+    #     updates["order_status"] = order["status"]
+    #     updates["tracking_number"] = order["tracking_number"]
+    #     updates["customer_name"] = order["customer_name"]
+
+
+    # -------------------------------------------------
+    # Order tracking / status
+    # -------------------------------------------------
+
     if (
         "track" in query
         or "where is my order" in query
         or "order status" in query
         or "shipping status" in query
     ):
+
         updates["order_status"] = order["status"]
         updates["tracking_number"] = order["tracking_number"]
         updates["customer_name"] = order["customer_name"]
 
+        # ---------------------------------------------
+        # Call external/simulated shipping API
+        # ---------------------------------------------
+
+        tracking_number = order["tracking_number"]
+
+        if tracking_number:
+
+            shipping_result = track_shipment(tracking_number)
+
+            if shipping_result.get("success"):
+                updates["shipping_info"] = shipping_result
+            else:
+                updates["shipping_not_found"] = True
     # -------------------------------------------------
     # Refund information
     # -------------------------------------------------
@@ -332,6 +362,31 @@ def writer_node(state: FinalState) -> FinalState:
             )
 
         parts.append(message)
+
+        # -------------------------------------------------
+    # Shipping information
+    # -------------------------------------------------
+
+    if state.get("shipping_info"):
+
+        shipping = state["shipping_info"]
+
+        shipping_message = (
+            f"Carrier: {shipping.get('carrier')}. "
+            f"Current location: {shipping.get('current_location')}. "
+            f"Status: {shipping.get('status')}. "
+            f"Estimated delivery: {shipping.get('estimated_delivery')}. "
+            f"Latest tracking event: {shipping.get('latest_event')}."
+        )
+
+        parts.append(shipping_message)
+
+    elif state.get("shipping_not_found"):
+
+        parts.append(
+            "I found the order, but I could not retrieve "
+            "the latest shipping information."
+        )
 
     # -------------------------------------------------
     # Refund information
