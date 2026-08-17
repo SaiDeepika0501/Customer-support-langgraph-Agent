@@ -1,0 +1,40 @@
+# venv/
+# __pycache__/
+# *.pyc
+# .env
+# .pytest_cache/
+
+# Virtual environment
+venv/
+.venv/
+
+# Environment variables / secrets
+.env
+
+# Python cache
+__pycache__/
+*.py[cod]
+
+# Testing/cache
+.pytest_cache/
+.coverage
+
+# IDE
+.vscode/
+.idea/
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# Logs
+*.log
+
+# Backup / temporary project folders
+*_backup/
+*.bak
+
+# Local database backups
+*.db-journal
+*.db-wal
+*.db-shm
