@@ -69,21 +69,49 @@ def planner_node(state: FinalState) -> FinalState:
         ]
     )
 
+    # needs_tool = any(
+    #     phrase in query
+    #     for phrase in [
+    #         "where is my order",
+    #         "track",
+    #         "track my order",
+    #         "order status",
+    #         "shipping status",
+    #         "refund amount",
+    #         "refund for",
+    #         "refund",
+    #         "refund status",
+    #         "charged twice",
+    #         "duplicate charge",
+    #     ]
+    # )
+
     needs_tool = any(
-        phrase in query
-        for phrase in [
-            "where is my order",
-            "track",
-            "track my order",
-            "order status",
-            "shipping status",
-            "refund amount",
-            "refund for",
-            "refund",
-            "refund status",
-            "charged twice",
-            "duplicate charge",
-        ]
+    phrase in query
+    for phrase in [
+        "where is my order",
+        "where is my package",
+        "track",
+        "track my order",
+        "order status",
+        "shipping status",
+        "shipping information",
+        "shipping details",
+        "tracking information",
+        "tracking details",
+        "estimated delivery",
+        "estimated delivery date",
+        "delivery date",
+        "when will my order arrive",
+        "when will my package arrive",
+        "when will it arrive",
+        "refund amount",
+        "refund for",
+        "refund",
+        "refund status",
+        "charged twice",
+        "duplicate charge",
+    ]
     )
     print(
     "PLANNER:",
@@ -230,11 +258,28 @@ def tool_node(state: FinalState) -> FinalState:
     # Order tracking / status
     # -------------------------------------------------
 
+    # if (
+    #     "track" in query
+    #     or "where is my order" in query
+    #     or "order status" in query
+    #     or "shipping status" in query
+    # ):
     if (
-        "track" in query
-        or "where is my order" in query
-        or "order status" in query
-        or "shipping status" in query
+    "track" in query
+    or "where is my order" in query
+    or "where is my package" in query
+    or "order status" in query
+    or "shipping status" in query
+    or "shipping information" in query
+    or "shipping details" in query
+    or "tracking information" in query
+    or "tracking details" in query
+    or "estimated delivery" in query
+    or "estimated delivery date" in query
+    or "delivery date" in query
+    or "when will my order arrive" in query
+    or "when will my package arrive" in query
+    or "when will it arrive" in query
     ):
 
         updates["order_status"] = order["status"]
